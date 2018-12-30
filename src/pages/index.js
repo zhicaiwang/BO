@@ -8,6 +8,7 @@ import {
   Input,
   Button,
   Table,
+  message,
 } from 'antd';
 import styles from './index.css';
 
@@ -16,9 +17,20 @@ import Utils from '../utils';
 const HomePage = ({
   home,
   form,
+  dispatch,
 }) => {
 
-  const { getFieldDecorator } = form;
+  const {
+    getFieldDecorator,
+    validateFields,
+  } = form;
+
+  const {
+    upPoolAmount,
+    downPoolAmount,
+    upBettersCount,
+    downBettersCount,
+  } = home;
 
   const columns = [
     {
@@ -38,6 +50,12 @@ const HomePage = ({
       dataIndex: 'result'
     }
   ];
+
+  // 获胜方人数，获胜方投入金额，获胜金额
+  // 收益回报 = (对方总金额 / 己方人数 / 己方投入金额) + 1
+  const rate = (amount, c1, a1) => {
+    return (((amount / c1 / a1) + 1) * 100).toFixed(2);
+  }
 
   return (
     <div className="pageContent">
@@ -111,11 +129,11 @@ const HomePage = ({
             >
               <Row>
                 <Col span={12}>
-                  当前 RTX 奖池总量
+                  当前 TRX 奖池总量
                 </Col>
                 <Col span={12}>
                   <h2>
-                    2612 RTX
+                    { upPoolAmount + downPoolAmount} TRX
                   </h2>
                 </Col>
               </Row>
@@ -124,7 +142,7 @@ const HomePage = ({
                   看涨人数
                 </Col>
                 <Col span={12} className={styles.upRate}>
-                  4
+                  { upBettersCount }
                 </Col>
               </Row>
               <Row>
@@ -132,7 +150,7 @@ const HomePage = ({
                   看跌人数
                 </Col>
                 <Col span={12} className={styles.downRate}>
-                  6
+                  { downBettersCount }
                 </Col>
               </Row>
               <br/>
@@ -158,7 +176,7 @@ const HomePage = ({
                   看涨竞猜金额
                 </Col>
                 <Col span={12} className={styles.upRate}>
-                  400 RTX
+                  { upPoolAmount } TRX
                 </Col>
               </Row>
               <Row>
@@ -166,7 +184,7 @@ const HomePage = ({
                   看跌竞猜金额
                 </Col>
                 <Col span={12} className={styles.downRate}>
-                  600 RTX
+                  { downPoolAmount } TRX
                 </Col>
               </Row>
             </Col>
@@ -180,10 +198,10 @@ const HomePage = ({
             >
               <Row style={{ height: 210 }} type="flex" justify="center" align="bottom">
                 <Col span={8} className={styles.todayStatusUp}>
-                  <p>38.8%</p>
+                  <p>{ ((upPoolAmount / (upPoolAmount + downPoolAmount)) * 100).toFixed(2)}%</p>
                   <div
                     className={styles.todayStatusUpMap}
-                    style={{ height: 150 * .388 }}
+                    style={{ height: `${150 * (upPoolAmount / (upPoolAmount + downPoolAmount))}px`}}
                   />
                   <div>看涨</div>
                 </Col>
@@ -191,10 +209,10 @@ const HomePage = ({
                   <span className={styles.pk}>pk</span>
                 </Col>
                 <Col span={8} className={styles.todayStatusDown}>
-                  <p>61.2%</p>
+                  <p>{ ((downPoolAmount / (upPoolAmount + downPoolAmount)) * 100).toFixed(2)}%</p>
                   <div
                     className={styles.todayStatusDownMap}
-                    style={{ height: 150 * .612 }}
+                    style={{ height: `${150 * (downPoolAmount / (upPoolAmount + downPoolAmount))}px`}}
                   />
                   <div>看跌</div>
                 </Col>
@@ -211,12 +229,31 @@ const HomePage = ({
           <Divider />
           <Row>
             <Col span={12}>
-              <Form layout="inline">
+              <Form
+                layout="inline"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  validateFields((err, values) => {
+                    if (!err) {
+                      const { upBetAmount } = values;
+                      if (upBetAmount > 0) {
+                        dispatch({
+                          type: 'home/betGame',
+                          payload: {
+                            type: 1,
+                            amount: +upBetAmount * 1e6,
+                          }
+                        });
+                      } else {
+                        message.error('请输入看涨金额！');
+                      }
+                    }
+                  });
+                }}
+              >
                 <Form.Item label="下注数量">
                   {
-                    getFieldDecorator('numbers', {
-
-                    })(
+                    getFieldDecorator('upBetAmount')(
                       <Input type="number" />
                     )
                   }
@@ -227,6 +264,7 @@ const HomePage = ({
                       background: 'green',
                       color: '#fff',
                     }}
+                    htmlType="submit"
                   >
                     看涨
                   </Button>
@@ -234,12 +272,31 @@ const HomePage = ({
               </Form>
             </Col>
             <Col span={12}>
-              <Form layout="inline">
+              <Form
+                layout="inline"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  validateFields((err, values) => {
+                    if (!err) {
+                      const { downBetAmount } = values;
+                      if (downBetAmount > 0) {
+                        dispatch({
+                          type: 'home/betGame',
+                          payload: {
+                            type: 2,
+                            amount: +downBetAmount * 1e6,
+                          }
+                        });
+                      } else {
+                        message.error('请输入看跌金额！');
+                      }
+                    }
+                  });
+                }}
+              >
                 <Form.Item label="下注数量">
                   {
-                    getFieldDecorator('numbers', {
-
-                    })(
+                    getFieldDecorator('downBetAmount')(
                       <Input type="number" />
                     )
                   }
@@ -250,6 +307,7 @@ const HomePage = ({
                       background: 'red',
                       color: '#fff',
                     }}
+                    htmlType="submit"
                   >
                     看跌
                   </Button>
@@ -276,44 +334,44 @@ const HomePage = ({
           <h2>投注规则</h2>
           <Divider />
           <ol>
+            {/* <li>
+              投注：平台默认单次最低投注数量100 TRX,单次最高投注数量10000 TRX
+            </li> */}
             <li>
-              投注：平台默认单次最低投注数量100ET,单次最高投注数量10000ET
+              输赢规则：若中奖，返还投注本金，并按赢方本金占比去分取输方的所有投注 TRX； 若未中奖，失去所有投注本金；平台不收取任何费用
             </li>
             <li>
-              输赢规则：若中奖，返还投注本金，并按赢方本金占比去分取输方的所有投注ET； 若未中奖，失去所有投注本金；平台不收取任何费用
+              如何计算：每局以每天中午12点 BTC 价格对比第二天中午12点BTC价格计算涨／跌。
             </li>
             <li>
-              如何计算：每局以每天中午12点BTC价格对比第二天中午12点BTC价格计算涨／跌。
-            </li>
-            <li>
-              竞猜开放时间：用户可在每天中午12点至晚上24点进行投注，竞猜当天中午12点至第二天中午12点的BTC价格涨跌。
+              竞猜开放时间：用户可在每天中午12点至晚上24点进行投注，竞猜当天中午12点至第二天中午12点的 BTC 价格涨跌。
             </li>
             <li>
               平台奖励发放：每日的18:00前发放上一日投注结果的奖励
             </li>
             <li>
-              用于投注的ET，将从充提账户ET余额中的扣除，如ET资产存放在币币账户中，需将ET划转至充提账户。
+              用于投注的 TRX，将从充提账户 TRX 余额中的扣除，如 TRX 资产存放在币币账户中，需将 TRX 划转至充提账户。
             </li>
           </ol>
         </div>
       </Card>
       <Card className={styles.card}>
         <div className={styles.note}>
-          <h2>获取 RTX 方法</h2>
+          <h2>获取 TRX 方法</h2>
           <Divider />
-          <h3>通过 “交易即挖矿” 获得ET</h3>
+          <h3>通过 “交易即挖矿” 获得 TRX</h3>
           <ol>
             <li>
-              只要产生交易，即可按交易额占比100% 返还ET的方式获取
+              只要产生交易，即可按交易额占比100% 返还 TRX 的方式获取
             </li>
             <li>
               通过“合作伙伴”模式，邀请好友注册并交易的方式获取
             </li>
           </ol>
-          <h3>交易购买ET</h3>
+          <h3>交易购买 TRX</h3>
           <ol>
             <li>
-              通过币币交易的形式，购买并持有ET
+              通过币币交易的形式，购买并持有 TRX
             </li>
           </ol>
         </div>

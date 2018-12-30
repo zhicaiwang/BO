@@ -1,14 +1,21 @@
 import TronWeb from 'tronweb';
 import {
+  message,
+} from 'antd';
+import {
   getContractServer,
   getUpAmountServer,
 } from './server';
 import {
   getGameId
 } from '../utils';
+import contracts from '../../build/contracts/BinaryOption.json';
+
+let contract = null;
+const gameId = getGameId();
 
 // 合约地址
-const contractAddress = 'TBWg8WjqCBaAcdmJkQg7J1qUgenhEVYqhf';
+const contractAddress = 'TMFTUYpBJw9rh6CnUzKd3b7Tvi1BUes42z';
 
 export default {
   namespace: 'home',
@@ -24,35 +31,51 @@ export default {
   },
   subscriptions: {
     steup({ dispatch, history }) {
-      history.listen(location => {
-        if (location.pathname === '/') {
-          dispatch({ type: 'getContract' });
+      window.addEventListener('load', function() {
+        if (typeof tronPay !== 'undefined') {
+          tronWeb = tronPay.tronWeb || tronWeb
+          if (tronWeb.isTronPay && tronWeb.ready) {
+            dispatch({ type: 'getContract' });
+          }
+        } else {
+          console.log('No tronWeb? You should install TronPay!')
         }
-      });
+      })
     },
   },
   effects: {
     *getContract(_, { call, put }) {
-      const contractData = yield call(getContractServer, contractAddress);
-      if (contractData) {
-        yield put({ type: 'setContract', payload: contractData });
-        yield put({ type: 'getUpAmount' });
+      contract = yield tronWeb.contract(contracts.abi, contractAddress);
+      if (contract) {
+        yield put({ type: 'getContractData' });
       }
     },
+    * getContractData(_, { put }) {
+      const upAmount = yield contract.getUpAmount(gameId).call();
+      const downAmount = yield contract.getDownAmount(gameId).call();
+      const balance = yield contract.getContractBalance().call();
+      console.log(upAmount);
+      console.log(downAmount);
+      console.log(balance);
+    },
     *getUpAmount(_, { call, put, select }) {
-      const { contract, gameId } = yield select((state) => (state.home));
-      const res = contract.getUpAmount(gameId).call();
-      // const res = yield call(getUpAmountServer, { contract, gameId});
+      const res = yield contract.getUpAmount(gameId).call();
       console.log(res);
+    },
+    *betGame({ payload }, { call, put }) {
+      const { type, amount } = payload;
+      const res = yield contract.betGame(gameId, type).send({
+        payable: false,
+        feeLimit: 10000,
+        callValue: amount,
+      });
+      if (res) {
+        message.success('投注成功！');
+        yield put({ type: 'getContractData' });
+      }
     }
   },
   reducers: {
-    // 设置合约
-    setContract(state, action) {
-      return {
-        ...state,
-        contract: action.payload,
-      };
-    },
+
   },
 };

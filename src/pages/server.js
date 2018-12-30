@@ -1,28 +1,18 @@
 import TronWeb from 'tronweb';
+import { getGameId } from '../utils';
 
 import contracts from '../../build/contracts/BinaryOption.json';
 
-if (!window.tronWeb) {
-  const HttpProvider = TronWeb.providers.HttpProvider;
-  const fullNode = new HttpProvider('https://api.trongrid.io');
-  const solidityNode = new HttpProvider('https://api.trongrid.io');
-  const eventServer = 'https://api.trongrid.io/';
-
-  const tronWeb = new TronWeb(
-    fullNode,
-    solidityNode,
-    eventServer,
-  );
-
-  window.tronWeb = tronWeb;
-}
+let contract = null;
+const gameId = getGameId();
 
 // 获取合约
 export function getContractServer(contractAddress) {
-  return tronWeb.contract(contracts.abi, contractAddress);
+  contract = tronWeb.contract(contracts.abi, contractAddress);
+  return contract;
 }
 
 // 获取看涨金额
-export function getUpAmountServer({ contract, params }) {
-  return contract.getUpAmount(params);
+export function getUpAmountServer() {
+  return contract.getUpAmount(gameId).call();
 }
