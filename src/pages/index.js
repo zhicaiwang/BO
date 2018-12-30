@@ -1,4 +1,4 @@
-
+import { connect } from 'dva';
 import {
   Row,
   Col,
@@ -11,7 +11,10 @@ import {
 } from 'antd';
 import styles from './index.css';
 
+import Utils from '../utils';
+
 const HomePage = ({
+  home,
   form,
 }) => {
 
@@ -319,4 +322,4 @@ const HomePage = ({
   );
 }
 
-export default Form.create()(HomePage);
+export default connect(({ home }) => ({ home }))(Form.create()(HomePage));
