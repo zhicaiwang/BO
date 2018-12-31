@@ -176,6 +176,18 @@ contract BinaryOption {
     uint256 index = getBetterIndex(gameId, add);
     _result = games[gameId].betters[index].investedAmount;
   }
+  // 获取某场游戏的看涨的人数
+  function getUpBettersCount(uint256 gameId) public constant returns(uint256) {
+    require(gameId > 0);
+    uint256 result = games[gameId].upBettersCount;
+    return result;
+  }
+  // 获取某场游戏的看跌的人数
+  function getDownBettersCount(uint256 gameId) public constant returns(uint256) {
+    require(gameId > 0);
+    uint256 result = games[gameId].downBettersCount;
+    return result;
+  }
   // 获取玩家的余额
   function getBalance() public view returns (uint256 _balance) {
     _balance = gameBank[msg.sender];
