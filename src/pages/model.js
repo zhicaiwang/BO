@@ -1,10 +1,12 @@
 import TronWeb from 'tronweb';
 import {
+  Modal,
+  Spin,
   message,
+  notification,
 } from 'antd';
 import {
-  getContractServer,
-  getUpAmountServer,
+  getBitcoinAmount,
 } from './server';
 import {
   getGameId
@@ -15,7 +17,7 @@ let contract = null;
 const gameId = getGameId();
 
 // 合约地址
-const contractAddress = 'TMFTUYpBJw9rh6CnUzKd3b7Tvi1BUes42z';
+const contractAddress = 'TErYRNEWhA7m8oTPoyVoBjtMPwonkZwBEb';
 
 export default {
   namespace: 'home',
@@ -28,6 +30,8 @@ export default {
     downBettersCount: 0,
     result: 0,
     contract: null,
+
+    loading: true,
   },
   subscriptions: {
     steup({ dispatch, history }) {
@@ -51,31 +55,93 @@ export default {
       }
     },
     * getContractData(_, { put }) {
-      const upAmount = yield contract.getUpAmount(gameId).call();
-      const downAmount = yield contract.getDownAmount(gameId).call();
-      const balance = yield contract.getContractBalance().call();
-      console.log(upAmount);
-      console.log(downAmount);
-      console.log(balance);
+      yield put({ type: 'updateLoading', payload: false });
+      yield put({ type: 'getUpPoolAmount' });
+      yield put({ type: 'getDownPoolAmount' });
+      yield put({ type: 'getUpBettersCount' });
+      yield put({ type: 'getDownBettersCount' });
     },
-    *getUpAmount(_, { call, put, select }) {
+    *getUpPoolAmount(_, { put }) {
       const res = yield contract.getUpAmount(gameId).call();
-      console.log(res);
+      if (res) {
+        yield put({ type: 'updateUpAmount', payload: tronWeb.fromSun(res) });
+      }
+    },
+    *getDownPoolAmount(_, { put }) {
+      const res = yield contract.getDownAmount(gameId).call();
+      if (res) {
+        yield put({ type: 'updateDownAmount', payload: tronWeb.fromSun(res) });
+      }
+    },
+    *getUpBettersCount(_, { put }) {
+      const res = yield contract.getUpBettersCount(gameId).call();
+      if (res) {
+        yield put({ type: 'updateUpBettersCount', payload: res.toNumber() });
+      }
+    },
+    *getDownBettersCount(_, { put }) {
+      const res = yield contract.getDownBettersCount(gameId).call();
+      if (res) {
+        yield put({ type: 'updateDownBettersCount', payload: res.toNumber() });
+      }
     },
     *betGame({ payload }, { call, put }) {
       const { type, amount } = payload;
+      Modal.confirm({
+        title: '温馨提示',
+        content: (
+          <div>
+            <Spin /> 正在等待合约节点确认事务，请稍后..
+          </div>
+        ),
+        onOk: () => {}
+      });
       const res = yield contract.betGame(gameId, type).send({
-        payable: false,
-        feeLimit: 10000,
         callValue: amount,
+        shouldPollResponse: true,
       });
       if (res) {
-        message.success('投注成功！');
+        notification.success({
+          message:'投注成功！'
+        });
+        console.log('下注成功，txId：', res);
         yield put({ type: 'getContractData' });
+      } else {
+        console.log(res);
+        yield put({ type: 'updateLoading', payload: false });
       }
-    }
+    },
   },
   reducers: {
-
+    updateUpAmount(state, action) {
+      return {
+        ...state,
+        upPoolAmount: +action.payload,
+      };
+    },
+    updateDownAmount(state, action) {
+      return {
+        ...state,
+        downPoolAmount: +action.payload,
+      };
+    },
+    updateUpBettersCount(state, action) {
+      return {
+        ...state,
+        upBettersCount: +action.payload,
+      };
+    },
+    updateDownBettersCount(state, action) {
+      return {
+        ...state,
+        downBettersCount: +action.payload,
+      };
+    },
+    updateLoading(state, action) {
+      return {
+        ...state,
+        loading: action.payload,
+      }
+    }
   },
 };

@@ -2,9 +2,9 @@ module.exports = {
   networks: {
     development: {
 // For trontools/quickstart docker image
-      from: 'TLUJ4zLtzkqwcbVjMxDR1g69VMSk627yYi',
+      from: 'TKyFMa8Ug6U1bHcnSGyt88HY2Tdg9huAZu',
       //privateKey: 'da146374a75310b9666e834ee4ad0866d6f4035967bfc76217c5a495fff9f0d0',
-      privateKey: '534d83b2445502499adc1e2dc409ad6fbadafcbaacfaeb769b409b17a3e9a47a',
+      privateKey: '47db8562ee9028039dcd8c4a35e089168dc389808a4b8fe625b7b41395246561',
       consume_user_resource_percent: 50,
       fee_limit: 1000000000,
 

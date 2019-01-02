@@ -35,10 +35,10 @@
   vertical-align: top;
 }
 
-.down::before {
+/* .down::before {
   content: '-';
   vertical-align: top;
-}
+} */
 
 .up::after , .down::after {
   content: '%';
