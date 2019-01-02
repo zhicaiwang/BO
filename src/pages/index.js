@@ -64,9 +64,9 @@ const HomePage = ({
   // type: 1 涨 2 跌
   function getRate(type = 1) {
     if (type === 1 && upPoolAmount > 0) {
-      return (downPoolAmount / upPoolAmount * 100).toFixed(2);
+      return (downPoolAmount / (upPoolAmount) * 100).toFixed(2);
     } else if (type === 2 && downPoolAmount > 0) {
-      return (upPoolAmount / downPoolAmount * 100).toFixed(2);
+      return (upPoolAmount / (downPoolAmount) * 100).toFixed(2);
     } else {
       return 0;
     }
@@ -74,13 +74,15 @@ const HomePage = ({
 
   // 计算投注比例
   function getCountPercent(type = 1) {
-    if (type === 1 && downPoolAmount > 0) {
-      return (upPoolAmount / downPoolAmount * 100).toFixed(2);
-    } else if (type === 2 && upPoolAmount > 0) {
-      return (downPoolAmount / upPoolAmount * 100).toFixed(2);
-    } else {
-      return 0;
+    const totalAmount = upPoolAmount + downPoolAmount;
+    if (totalAmount > 0) {
+      if (type === 1) {
+        return (upPoolAmount / totalAmount * 100).toFixed(2);
+      } else if (type === 2) {
+        return (downPoolAmount / totalAmount * 100).toFixed(2);
+      }
     }
+    return 0;
   }
 
   function getBitcoinRate() {
