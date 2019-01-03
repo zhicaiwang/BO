@@ -34,6 +34,8 @@ const HomePage = ({
     downBettersCount,
 
     loading,
+    myGame,
+    balance,
   } = home;
 
   const {
@@ -56,7 +58,17 @@ const HomePage = ({
     },
     {
       title: '竞猜结果',
-      dataIndex: 'result'
+      dataIndex: 'result',
+      render: (text) => (
+        <div>
+          <span>{+text || '-'}</span>&nbsp;&nbsp;&nbsp;
+          {
+            balance ? (
+              <Button type="primary" onClick={() => { dispatch({ type: 'home/playerWithdraw' })}}>提取</Button>
+            ) : null
+          }
+        </div>
+      )
     }
   ];
 
@@ -358,10 +370,12 @@ const HomePage = ({
             <h2>我的竞猜</h2>
             <Divider />
             <Table
+              rowKey="date"
               columns={columns}
               locale={{
                 emptyText: '暂无数据'
               }}
+              dataSource={myGame}
             />
           </div>
         </Card>

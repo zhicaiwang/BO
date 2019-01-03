@@ -17,7 +17,7 @@ let contract = null;
 const gameId = getGameId();
 
 // 合约地址
-const contractAddress = 'TQG3mNguHQQ5wKx44CCXcyL4XLQmGdkRsu';
+const contractAddress = 'TXtZYYQJHKdMYH5D2d3zZQFHwUfPMpoSfJ';
 
 export default {
   namespace: 'home',
@@ -31,6 +31,7 @@ export default {
     result: 0,
     contract: null,
 
+    myGame: [],
     loading: true,
   },
   subscriptions: {
@@ -48,21 +49,28 @@ export default {
             clearInterval(timer);
 
             if (!window.tronWeb) {
-              const TRONGRID_API = 'https://api.trongrid.io';
+              const HttpProvider = TronWeb.providers.HttpProvider;
+              const fullNode = new HttpProvider('http://127.0.0.1:8090');
+              const solidityNode = new HttpProvider('http://127.0.0.1:8091');
+              const eventServer = 'http://127.0.0.1:8092';
 
               window.tronWeb = new TronWeb(
-                TRONGRID_API,
-                TRONGRID_API,
-                TRONGRID_API
+                fullNode,
+                solidityNode,
+                eventServer
               );
+
+              return notification.warning({
+                message: '温馨提示',
+                description: '没有检测到您的钱包数据，请安装 TronLink 或 TronPay 登陆后刷新页面尝试！',
+              });
             }
 
             if (!window.tronWeb.ready) {
-              console.log('no ready');
-              // return notification.warning({
-              //   message: '温馨提示',
-              //   description: '发现您 tronWeb 你需要安装 TronPay 或者 TronLink 插件参与竞猜！',
-              // });
+              return notification.warning({
+                message: '温馨提示',
+                description: '发现您 tronWeb 没有准备好，请尝试登陆您的钱包地址再尝试！',
+              });
             }
 
             dispatch({ type: 'updateLoading', payload: false });
@@ -72,11 +80,8 @@ export default {
             tries++;
           }
 
-          tronWebState.installed = !!window.tronWeb;
-          tronWebState.loggedIn = window.tronWeb && window.tronWeb.ready;
-
           // 判断 tronWeb
-          if (window.tronWeb) {
+          if (window.tronWeb && window.tronWeb.ready) {
             dispatch({ type: 'getContract' });
             clearInterval(timer);
           }
@@ -98,6 +103,10 @@ export default {
       yield put({ type: 'getDownPoolAmount' });
       yield put({ type: 'getUpBettersCount' });
       yield put({ type: 'getDownBettersCount' });
+      yield put({ type: 'getBalance' });
+      yield put({ type: 'getBetterPlay' });
+      yield put({ type: 'getBetterInvested' });
+      yield put({ type: 'getResult' });
     },
     *getUpPoolAmount(_, { put }) {
       const res = yield contract.getUpAmount(gameId).call();
@@ -123,6 +132,32 @@ export default {
         yield put({ type: 'updateDownBettersCount', payload: res.toNumber() });
       }
     },
+    *getBalance(_, { put }) {
+      const res = yield contract.getBalance().call();
+      if (res) {
+        yield put({ type: 'updateBalance', payload: { result: +tronWeb.fromSun(res.toNumber()) } });
+      }
+    },
+    *getBetterPlay(_, { put }) {
+      const address = tronWeb.defaultAddress.base58;
+      const res = yield contract.getBetterPlay(gameId, address).call();
+      if (res) {
+        yield put({ type: 'updateMyGame', payload: { type: res._result.toNumber() } });
+      }
+    },
+    *getBetterInvested(_, { put }) {
+      const address = tronWeb.defaultAddress.base58;
+      const res = yield contract.getBetterInvested(gameId, address).call();
+      if (res) {
+        yield put({ type: 'updateMyGame', payload: { money: tronWeb.fromSun(res._result) } });
+      }
+    },
+    *getResult(_, { put }) {
+      const res = yield contract.getResult(gameId).call();
+      if (res) {
+        yield put({ type: 'updateMyGame', payload: { result: +tronWeb.fromSun(res.toNumber()) } });
+      }
+    },
     *betGame({ payload }, { call, put }) {
       const { type, amount } = payload;
       Modal.confirm({
@@ -146,9 +181,32 @@ export default {
         yield put({ type: 'getContractData' });
       } else {
         console.log(res);
+        notification.error({
+          message:'下注失败！',
+          description: '请重新尝试！',
+        });
         yield put({ type: 'updateLoading', payload: false });
       }
     },
+    *playerWithdraw(_, { put }){
+      const res = yield contract.playerWithdraw().send({
+        callValue: 0,
+        shouldPollResponse: true,
+      });
+      if (res) {
+        notification.success({
+          message:'提现成功！'
+        });
+        yield put({ type: 'getContractData' });
+      } else {
+        console.log(res);
+        notification.error({
+          message:'提现失败！',
+          description: '请联系客服或开发者！',
+        });
+        yield put({ type: 'updateLoading', payload: false });
+      }
+    }
   },
   reducers: {
     updateUpAmount(state, action) {
@@ -180,6 +238,21 @@ export default {
         ...state,
         loading: action.payload,
       }
+    },
+    updateMyGame(state, action) {
+      const backList = [];
+      const obj = Object.assign(state.myGame[0] || { date: gameId }, action.payload);
+      backList.push(obj);
+      return {
+        ...state,
+        myGame: backList,
+      };
+    },
+    updateBalance(state, action) {
+      return {
+        ...state,
+        balance: action.payload,
+      };
     }
   },
 };
