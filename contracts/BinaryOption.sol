@@ -65,7 +65,6 @@ contract BinaryOption {
   mapping (uint256 => Game) public games;
   mapping (address => uint256) public gameBank;
   address public contractModifier;
-  //address public developer;
 
   /**
   * Constructor
@@ -74,7 +73,6 @@ contract BinaryOption {
   */
   constructor() public {
     contractModifier = msg.sender;
-    //developer = msg.sender;
   }
 
   /**
@@ -220,26 +218,44 @@ contract BinaryOption {
   // 玩家下注游戏，， gameID为要下注的游戏id，即当日日期，bet为要下的注，1为看涨，2为看跌
   function betGame(uint256 gameId, uint256 bet) public payable returns(bool result) {
     require(gameId > 0 && bet > 0 && bet < 3);
-    require(msg.value > 0);
+    // require(msg.value > 0 && msg.value > 100 && msg.value < 10000);
     require(msg.sender != contractModifier);
 
     Game storage _game = games[gameId];
     require(_game.result == 0);
+    require(_game.endTime > now);
 
-    uint256 total = SafeMath.add(_game.upBettersCount, _game.downBettersCount);
-    Better storage _better = _game.betters[total];
+    bool isNewBetter = false;
+    uint256 index = 0; // Better index
+    uint256 total = getBetterTotal(gameId);
+
+    if(total == 0) {
+      isNewBetter = true;
+    } else {
+      index = getBetterIndex(gameId, msg.sender); // get existing player
+    }
+
+    Better storage _better = _game.betters[index];
     _better.add = msg.sender;
-    _better.investedAmount = msg.value;
-    _better.bet = bet;
+    _better.investedAmount = SafeMath.add(_better.investedAmount, msg.value);
+
+    if (!isNewBetter) {
+      require(_better.bet == bet); //only can bet UP or DOWN
+    } else {
+      _better.bet = bet;
+    }
 
     if(bet == 1) {
       _game.upPoolAmount = SafeMath.add(_game.upPoolAmount, msg.value);
-      _game.upBettersCount++;
+      if (isNewBetter) {
+        _game.upBettersCount++;
+      }
     } else if(bet == 2) {
       _game.downPoolAmount = SafeMath.add(_game.downPoolAmount, msg.value);
-      _game.downBettersCount++;
+      if (isNewBetter) {
+        _game.downBettersCount++;
+      }
     }
-
     return true;
   }
 
@@ -286,16 +302,18 @@ contract BinaryOption {
     uint256 refund = gameBank[msg.sender];
     require (refund > 0);
     gameBank[msg.sender] = 0;
-
-    //TODO
     msg.sender.transfer(refund);
-    //if(!msg.sender.call.gas(3000000).value(refund)) throw;
     return true;
   }
 
   /**
    * Private functions
    */
+  function getBetterTotal(uint256 gameId) private view returns (uint256 result) {
+    require(gameId > 0);
+    result = SafeMath.add(games[gameId].upBettersCount, games[gameId].downBettersCount);
+  }
+
   function getBetterIndex(uint256 gameId, address add) private view returns (uint256 result) {
     require(gameId > 0);
     uint256 betterCount = SafeMath.add(games[gameId].upBettersCount, games[gameId].downBettersCount);
