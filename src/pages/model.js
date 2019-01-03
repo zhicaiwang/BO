@@ -50,9 +50,9 @@ export default {
 
             if (!window.tronWeb) {
               const HttpProvider = TronWeb.providers.HttpProvider;
-              const fullNode = new HttpProvider('http://127.0.0.1:8090');
-              const solidityNode = new HttpProvider('http://127.0.0.1:8091');
-              const eventServer = 'http://127.0.0.1:8092';
+              const fullNode = new HttpProvider('https://api.trongrid.io');
+              const solidityNode = new HttpProvider('https://api.trongrid.io');
+              const eventServer = 'https://api.trongrid.io';
 
               window.tronWeb = new TronWeb(
                 fullNode,
