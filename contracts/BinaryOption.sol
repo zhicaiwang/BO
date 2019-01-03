@@ -231,8 +231,16 @@ contract BinaryOption {
 
     if(total == 0) {
       isNewBetter = true;
+
     } else {
-      index = getBetterIndex(gameId, msg.sender); // get existing player
+      index = getBetterIndex(gameId, msg.sender); // get existing better
+
+      if (_game.betters[index].add == msg.sender) {
+        isNewBetter = false;
+      } else if (index == 0) {
+        isNewBetter = true;
+        index = total;
+      }
     }
 
     Better storage _better = _game.betters[index];
