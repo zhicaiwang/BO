@@ -114,7 +114,11 @@ contract BinaryOption {
   /**
   * Events
   */
-  //event test_value(uint256 indexed value1);
+  // event test_value(uint256 indexed value);
+  event eventPlaceBet(address indexed from, uint256 indexed value);
+  event eventTransfer(address indexed to, uint256 value);
+  event eventAddGame (uint256 gameId, uint256 startTime, uint256 endTime);
+  event eventSetGameResult(uint256 gameId, uint256 value);
 
   /**
   * Public functions
@@ -129,15 +133,6 @@ contract BinaryOption {
     selfdestruct(contractModifier);
   }
 
-  // Create games 创建游戏，gameId为当天日期，如20181228，startTime是开始时间，endTime为结束时间
-  // 开始时间必须大于now，结束时间必须大于开始时间
-  function addGame(uint256 gameId, uint256 startTime, uint256 endTime) public onlyContractModifier returns (bool result) {
-    require(startTime > now && endTime > startTime);
-    require(gameId >= 0);
-    Game memory _game = Game(gameId, startTime, endTime, 0, 0, 0, 0, 0);
-    games[gameId] = _game;
-    return true;
-  }
   // 获取某场游戏的开始时间
   function getGameStartTime(uint256 gameId) public constant returns(uint256) {
     require(gameId > 0);
@@ -166,13 +161,23 @@ contract BinaryOption {
   function getBetterPlay(uint256 gameId, address add) public view returns (uint256 _result) {
     require(gameId > 0);
     uint256 index = getBetterIndex(gameId, add);
-    _result = games[gameId].betters[index].bet;
+
+    if(getBetterTotal(gameId) == index) {
+      _result = 0;
+    } else {
+      _result = games[gameId].betters[index].bet;
+    }
   }
   // 获取某场游戏某个玩家的下注金额
   function getBetterInvested(uint256 gameId, address add) public view returns (uint256 _result) {
     require(gameId > 0);
     uint256 index = getBetterIndex(gameId, add);
-    _result = games[gameId].betters[index].investedAmount;
+
+    if(getBetterTotal(gameId) == index) {
+      _result = 0;
+    } else {
+      _result = games[gameId].betters[index].investedAmount;
+    }
   }
   // 获取某场游戏的看涨的人数
   function getUpBettersCount(uint256 gameId) public constant returns(uint256) {
@@ -215,10 +220,22 @@ contract BinaryOption {
   }
 */
 
+  // Create games 创建游戏，gameId为当天日期，如20181228，startTime是开始时间，endTime为结束时间
+  // 开始时间必须大于now，结束时间必须大于开始时间
+  function addGame(uint256 gameId, uint256 startTime, uint256 endTime) public onlyContractModifier returns (bool result) {
+    require(startTime > now && endTime > startTime);
+    require(gameId >= 0);
+    Game memory _game = Game(gameId, startTime, endTime, 0, 0, 0, 0, 0);
+    games[gameId] = _game;
+
+    emit eventAddGame (gameId, startTime, endTime);
+    return true;
+  }
+
   // 玩家下注游戏，， gameID为要下注的游戏id，即当日日期，bet为要下的注，1为看涨，2为看跌
   function betGame(uint256 gameId, uint256 bet) public payable returns(bool result) {
     require(gameId > 0 && bet > 0 && bet < 3);
-    // require(msg.value > 0 && msg.value > 100 && msg.value < 10000);
+    require(msg.value > 0 && msg.value >= 100000000); // min bet 100 trx
     require(msg.sender != contractModifier);
 
     Game storage _game = games[gameId];
@@ -226,21 +243,11 @@ contract BinaryOption {
     require(_game.endTime > now);
 
     bool isNewBetter = false;
-    uint256 index = 0; // Better index
+    uint256 index = getBetterIndex(gameId, msg.sender); // Better index
     uint256 total = getBetterTotal(gameId);
 
-    if(total == 0) {
+    if(total == 0 || total == index) {
       isNewBetter = true;
-
-    } else {
-      index = getBetterIndex(gameId, msg.sender); // get existing better
-
-      if (_game.betters[index].add == msg.sender) {
-        isNewBetter = false;
-      } else if (index == 0) {
-        isNewBetter = true;
-        index = total;
-      }
     }
 
     Better storage _better = _game.betters[index];
@@ -264,6 +271,8 @@ contract BinaryOption {
         _game.downBettersCount++;
       }
     }
+
+    emit eventPlaceBet(msg.sender, msg.value);
     return true;
   }
 
@@ -303,14 +312,19 @@ contract BinaryOption {
          gameBank[better.add] = SafeMath.add(gameBank[better.add], _balance);
        }
      }
+
+     emit eventSetGameResult(gameId, result);
      return true;
   }
+
   // 玩家把自己的合约的余额转账到钱包地址
   function playerWithdraw() external noReentrancy returns(bool) {
     uint256 refund = gameBank[msg.sender];
     require (refund > 0);
     gameBank[msg.sender] = 0;
     msg.sender.transfer(refund);
+
+    emit eventTransfer(msg.sender, refund);
     return true;
   }
 
@@ -322,14 +336,15 @@ contract BinaryOption {
     result = SafeMath.add(games[gameId].upBettersCount, games[gameId].downBettersCount);
   }
 
-  function getBetterIndex(uint256 gameId, address add) private view returns (uint256 result) {
+  // return better count if not found
+  function getBetterIndex(uint256 gameId, address add) private view returns (uint256) {
     require(gameId > 0);
     uint256 betterCount = SafeMath.add(games[gameId].upBettersCount, games[gameId].downBettersCount);
     for(uint256 i = 0; i < betterCount; i++){
       if(games[gameId].betters[i].add == add){
-        result = i;
-        break;
+        return i;
       }
     }
+    return betterCount;
   }
 }

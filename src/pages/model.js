@@ -17,7 +17,7 @@ let contract = null;
 const gameId = getGameId();
 
 // 合约地址
-const contractAddress = 'TUY6vd4SWnqLwnxP48P7YbhZ7f3fEhNwx7';
+const contractAddress = 'TWkGMrmD21XhtJRGMpZyU5fYpaKuExEQmm';
 
 export default {
   namespace: 'home',
