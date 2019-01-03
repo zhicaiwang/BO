@@ -2,9 +2,9 @@ module.exports = {
   networks: {
     development: {
 // For trontools/quickstart docker image
-      from: 'TKyFMa8Ug6U1bHcnSGyt88HY2Tdg9huAZu',
+      from: 'TSN5oi9mLZxghWwWkeQUQ1skLXnEPiki1k',
       //privateKey: 'da146374a75310b9666e834ee4ad0866d6f4035967bfc76217c5a495fff9f0d0',
-      privateKey: '47db8562ee9028039dcd8c4a35e089168dc389808a4b8fe625b7b41395246561',
+      privateKey: 'e603372c9a3b5ade59f413d405e498ddb07ebdc17ff1110fcb72f0ee01b3d5f5',
       consume_user_resource_percent: 50,
       fee_limit: 1000000000,
 
@@ -15,6 +15,9 @@ module.exports = {
       fullNode: "http://127.0.0.1:8090",
       solidityNode: "http://127.0.0.1:8091",
       eventServer: "http://127.0.0.1:8092",
+      // fullNode: "https://api.trongrid.io",
+      // solidityNode: "https://api.trongrid.io",
+      // eventServer: "https://api.trongrid.io",
 
       network_id: "*"
     },
@@ -45,9 +48,12 @@ module.exports = {
       network_id: "*"
     },
     shasta: {
-      privateKey: process.env.PK,
-      consume_user_resource_percent: 30,
-      fee_limit: 100000000,
+      //privateKey: process.env.PK,
+      from: 'TETsrEFMWFSPpY4Ey5EpT4V84k34CxFpFE',
+      //privateKey: 'da146374a75310b9666e834ee4ad0866d6f4035967bfc76217c5a495fff9f0d0',
+      privateKey: '37d459332e86c6e63224ec0099ff5c1466c0d1e6fd0aa011165977fd56cf7e3b',
+      consume_user_resource_percent: 100,
+      fee_limit: 1000000000,
 
       // tronbox 2.1.9+
       // fullHost: "https://api.shasta.trongrid.io",
