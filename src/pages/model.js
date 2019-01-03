@@ -36,14 +36,52 @@ export default {
   subscriptions: {
     steup({ dispatch, history }) {
       window.addEventListener('load', function() {
-        if (typeof tronPay !== 'undefined') {
-          tronWeb = tronPay.tronWeb || tronWeb
-          if (tronWeb.isTronPay && tronWeb.ready) {
-            dispatch({ type: 'getContract' });
+
+        let tries = 0;
+
+        const tronWebState = {};
+
+        const timer = setInterval(() => {
+
+          if (tries >= 10) {
+
+            clearInterval(timer);
+
+            if (!window.tronWeb) {
+              const TRONGRID_API = 'https://api.trongrid.io';
+
+              window.tronWeb = new TronWeb(
+                TRONGRID_API,
+                TRONGRID_API,
+                TRONGRID_API
+              );
+            }
+
+            if (!window.tronWeb.ready) {
+              console.log('no ready');
+              // return notification.warning({
+              //   message: '温馨提示',
+              //   description: '发现您 tronWeb 你需要安装 TronPay 或者 TronLink 插件参与竞猜！',
+              // });
+            }
+
+            dispatch({ type: 'updateLoading', payload: false });
           }
-        } else {
-          console.log('No tronWeb? You should install TronPay!')
-        }
+
+          if (!window.tronWeb) {
+            tries++;
+          }
+
+          tronWebState.installed = !!window.tronWeb;
+          tronWebState.loggedIn = window.tronWeb && window.tronWeb.ready;
+
+          // 判断 tronWeb
+          if (window.tronWeb) {
+            dispatch({ type: 'getContract' });
+            clearInterval(timer);
+          }
+
+        }, 100);
       })
     },
   },
