@@ -118,8 +118,11 @@ const HomePage = ({
       <Spin tip="加载中" spinning={loading}>
         <Card className={styles.card}>
           <div className={styles.bet}>
-            <h2>
+            <h2 className={styles.betTitle}>
               竞猜下注
+              <span>
+                今日 12:00 BTC 价格 vs. 明日 12:00 BTC 价格
+              </span>
             </h2>
             <Col
               className={styles.titleCols}
@@ -132,11 +135,11 @@ const HomePage = ({
               style={{ float: 'right' }}
             >
               <div className={styles.bitcoinInfos}>
-                <strong>今日BTC </strong>
+                <strong>今日 BTC </strong>
                 <p className={styles.colorUp}>${CONFIG.today.bitcoin}</p>
               </div>
               <div className={styles.bitcoinInfos}>
-                <strong>昨日BTC</strong>
+                <strong>昨日 BTC</strong>
                 <p className={styles.colorUp}>${CONFIG.yesterday.bitcoin}</p>
               </div>
               <div className={styles.bitcoinInfos}>
@@ -379,22 +382,22 @@ const HomePage = ({
             <Divider />
             <ol>
               <li>
-                投注：平台默认单次最低投注数量100 TRX, 允许多次投注，但不允许双边下注。
+                投注：平台默认单次最低投注数量 100 TRX, 允许多次投注，但不允许双边下注。
               </li>
               <li>
-                输赢规则：若中奖，返还投注本金，并按赢方本金占比去分取输方95%投注的TRX，5%归开发者；若未中奖，失去所有投注本金。
+                输赢规则：若中奖，返还投注本金，并按赢方本金占比去分取输方 95% 投注的 TRX，5% 归开发者；若未中奖，失去所有投注本金。
               </li>
               <li>
-                如何计算：每局以每天中午12点 BTC 价格对比第二天中午12点BTC价格计算涨／跌。
+                如何计算：每局以每天中午 12 点 BTC 价格对比第二天中午 12 点 BTC 价格计算涨／跌。
               </li>
               <li>
-                数据来源：BTC价格来源于CoinDesk BPI。（https://www.coindesk.com/price/bitcoin）
+                数据来源：BTC 价格来源于 CoinDesk BPI。（<a href="https://www.coindesk.com/price/bitcoin" target="_blank">https://www.coindesk.com/price/bitcoin</a>）
               </li>
               <li>
-                竞猜开放时间：用户可在每天中午12点至晚上24点进行投注，竞猜当天中午12点至第二天中午12点的 BTC 价格涨跌。
+                竞猜开放时间：用户可在每天中午 12 点至晚上 24 点进行投注，竞猜当天中午 12 点至第二天中午 12 点的 BTC 价格涨跌。
               </li>
               <li>
-                平台奖励发放：每日的18:00前发放上一日投注结果的奖励。
+                平台奖励发放：每日的 18:00 前发放上一日投注结果的奖励。
               </li>
               <li>
                 奖励存放于合约中，玩家可以将余额划转提现至投注TRX钱包。
