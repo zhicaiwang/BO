@@ -9,7 +9,8 @@ import {
   getBitcoinAmount,
 } from './server';
 import {
-  getGameId
+  getGameId,
+  getHistoryGameId,
 } from '../utils';
 import contracts from '../../build/contracts/BinaryOption.json';
 
@@ -17,7 +18,7 @@ let contract = null;
 const gameId = getGameId();
 
 // 合约地址
-const contractAddress = 'TEbJDVcxYpm7bC6NGwpv76sbUdmonjEjWf';
+const contractAddress = 'TDCL5t7WxjTWfrXEVfueGs7hBL1ZkL3SZE';
 
 export default {
   namespace: 'home',
@@ -32,7 +33,7 @@ export default {
     contract: null,
     balance: 0,
 
-    myGame: [],
+    myGame: getHistoryGameId().map((item) => ({ gameId: item })),
     loading: true,
     accountData: {},
   },
@@ -84,7 +85,13 @@ export default {
 
           // 判断 tronWeb
           if (window.tronWeb && window.tronWeb.ready) {
+            const gameIds = getHistoryGameId() || [];
             dispatch({ type: 'getContract' });
+            (gameIds || []).forEach((item) => {
+              dispatch({ type: 'getBetterPlay', payload: item });
+              dispatch({ type: 'getBetterInvested', payload: item });
+              dispatch({ type: 'getResult', payload: item });
+            });
             clearInterval(timer);
           }
 
@@ -113,9 +120,9 @@ export default {
       yield put({ type: 'getUpBettersCount' });
       yield put({ type: 'getDownBettersCount' });
       yield put({ type: 'getBalance' });
-      yield put({ type: 'getBetterPlay' });
-      yield put({ type: 'getBetterInvested' });
-      yield put({ type: 'getResult' });
+      yield put({ type: 'getBetterPlay', payload: gameId });
+      yield put({ type: 'getBetterInvested', payload: gameId });
+      yield put({ type: 'getResult', payload: gameId });
     },
     *getUpPoolAmount(_, { put }) {
       const res = yield contract.getUpAmount(gameId).call();
@@ -147,24 +154,24 @@ export default {
         yield put({ type: 'updateBalance', payload: +window.tronWeb.fromSun(res) });
       }
     },
-    *getBetterPlay(_, { put }) {
+    *getBetterPlay({ payload }, { put }) {
       const address = window.tronWeb.defaultAddress.base58;
-      const res = yield contract.getBetterPlay(gameId, address).call();
+      const res = yield contract.getBetterPlay(payload, address).call();
       if (res) {
-        yield put({ type: 'updateMyGame', payload: { type: res._result.toNumber() } });
+        yield put({ type: 'updateMyGame', payload: { gameId: payload, date: payload, type: res._result.toNumber() } });
       }
     },
-    *getBetterInvested(_, { put }) {
+    *getBetterInvested({ payload }, { put }) {
       const address = window.tronWeb.defaultAddress.base58;
-      const res = yield contract.getBetterInvested(gameId, address).call();
+      const res = yield contract.getBetterInvested(payload, address).call();
       if (res) {
-        yield put({ type: 'updateMyGame', payload: { money: window.tronWeb.fromSun(res._result) } });
+        yield put({ type: 'updateMyGame', payload: { gameId: payload,  money: +window.tronWeb.fromSun(res._result) } });
       }
     },
-    *getResult(_, { put }) {
-      const res = yield contract.getResult(gameId).call();
+    *getResult({ payload }, { put }) {
+      const res = yield contract.getResult(payload).call();
       if (res) {
-        yield put({ type: 'updateMyGame', payload: { result: res._result.toNumber() } });
+        yield put({ type: 'updateMyGame', payload: { gameId: payload, result: res.toNumber() } });
       }
     },
     *betGame({ payload }, { call, put }) {
@@ -249,12 +256,15 @@ export default {
       }
     },
     updateMyGame(state, action) {
-      const backList = [];
-      const obj = Object.assign(state.myGame[0] || { date: gameId }, action.payload);
-      backList.push(obj);
+      const myGameBack = [].concat(state.myGame);
+      for (var i = 0; i < myGameBack.length; i++) {
+        if (myGameBack[i].gameId === action.payload.gameId) {
+          Object.assign(myGameBack[i], action.payload);
+        }
+      }
       return {
         ...state,
-        myGame: backList,
+        myGame: myGameBack,
       };
     },
     updateBalance(state, action) {

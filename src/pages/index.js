@@ -13,6 +13,7 @@ import {
 } from 'antd';
 import styles from './index.css';
 import CONFIG from '../../public/config.js';
+import { getHistoryGameId } from '../utils';
 
 const HomePage = ({
   home,
@@ -70,7 +71,7 @@ const HomePage = ({
         if (+text === 0) {
           result = '尚未开奖';
         } else {
-          result = +text === record.type ? '猜中' : '未猜中';
+          result = +text === +record.type ? '猜中' : '未猜中';
         }
         return (
           <div>
@@ -374,7 +375,7 @@ const HomePage = ({
               locale={{
                 emptyText: '暂无数据'
               }}
-              dataSource={myGame}
+              dataSource={myGame.filter((item) => item.money > 0)}
             />
           </div>
         </Card>

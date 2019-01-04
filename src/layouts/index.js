@@ -13,8 +13,6 @@ const BasicLayout = ({
     accountData,
   } = home;
 
-  console.log(accountData);
-
   return (
     <div className={styles.normal}>
       <Header style={{ background: '#0D2C5A' }}>
