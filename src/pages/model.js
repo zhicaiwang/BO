@@ -18,7 +18,7 @@ let contract = null;
 const gameId = getGameId();
 
 // 合约地址
-const contractAddress = 'TDCL5t7WxjTWfrXEVfueGs7hBL1ZkL3SZE';
+const contractAddress = 'TSMoaHCU79crC48fGCHBwgbsKDic4yKski';
 
 export default {
   namespace: 'home',
@@ -149,10 +149,11 @@ export default {
       }
     },
     *getBalance(_, { put }) {
-      const res = yield contract.getBalance().call();
+      const address = window.tronWeb.defaultAddress.base58;
+      const res = yield contract.getBalance(address).call();
       if (res) {
-        console.log('获取玩家的余额', res);
-        yield put({ type: 'updateBalance', payload: +window.tronWeb.fromSun(res) });
+        console.log('获取玩家的余额', res, +window.tronWeb.fromSun(res._balance));
+        yield put({ type: 'updateBalance', payload: +window.tronWeb.fromSun(res._balance) });
       }
     },
     *getBetterPlay({ payload }, { put }) {

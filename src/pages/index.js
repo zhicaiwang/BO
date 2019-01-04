@@ -230,26 +230,26 @@ const HomePage = ({
                       getFieldDecorator('downBetAmount',{
                         initialValue: 100,
                       })(
-                      <Input type="number" />
-                    )
-                  }
-                </Form.Item>
-                <Form.Item>
-                  <Button
-                    style={{
-                      background: 'red',
-                      color: '#fff',
-                    }}
-                    htmlType="submit"
-                  >
-                    看跌
-                  </Button>
-                </Form.Item>
-              </Form>
-            </Col>
-          </Row>
-        </div>
-      </Card>
+                        <Input type="number" />
+                      )
+                    }
+                  </Form.Item>
+                  <Form.Item>
+                    <Button
+                      style={{
+                        background: 'red',
+                        color: '#fff',
+                      }}
+                      htmlType="submit"
+                    >
+                      看跌
+                    </Button>
+                  </Form.Item>
+                </Form>
+              </Col>
+            </Row>
+          </div>
+        </Card>
 
         <Card className={styles.card}>
           <div className={styles.todayStatus}>
@@ -414,7 +414,7 @@ const HomePage = ({
 
         <Card className={styles.card}>
           <Row className={styles.titleInfos} gutter={16}>
-          COPYRIGHT ©2018 BINARYTRON.COM ALL RIGHT RESERVED.
+            COPYRIGHT ©2018 BINARYTRON.COM ALL RIGHT RESERVED.
           </Row>
         </Card>
 
