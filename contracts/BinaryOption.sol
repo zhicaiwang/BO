@@ -192,8 +192,8 @@ contract BinaryOption {
     return result;
   }
   // 获取玩家的余额
-  function getBalance() public view returns (uint256 _balance) {
-    _balance = gameBank[msg.sender];
+  function getBalance(address add) public view returns (uint256 _balance) {
+    _balance = gameBank[add];
   }
   // 获取本合约的余额
   function getContractBalance() public view returns (uint256 _contractBalance) {
