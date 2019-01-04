@@ -27,10 +27,10 @@ const BasicLayout = ({
         {
           accountData.address ? (
             <div style={{ float: 'right', paddingTop: 6, }}>
-              <p style={{ lineHeight: '24px', color: '#fff', margin: 0, width: 360, textAlign: 'left', }}>
+              <p style={{ lineHeight: '24px', color: '#fff', margin: 0, minWidth: 360, textAlign: 'left', }}>
                 <span>钱包地址：</span>{accountData.address}
               </p>
-              <p style={{ lineHeight: '24px', color: '#fff', margin: 0, width: 360, textAlign: 'left', }}>
+              <p style={{ lineHeight: '24px', color: '#fff', margin: 0, minWidth: 360, textAlign: 'left', }}>
                 <span>账户余额：</span>{accountData.balance}
               </p>
             </div>
