@@ -14,8 +14,6 @@ import {
 import styles from './index.css';
 import CONFIG from '../../public/config.js';
 
-import Utils from '../utils';
-
 const HomePage = ({
   home,
   form,

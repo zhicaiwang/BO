@@ -92,7 +92,7 @@ export default {
   },
   effects: {
     *getContract(_, { call, put }) {
-      contract = yield tronWeb.contract(contracts.abi, contractAddress);
+      contract = yield window.tronWeb.contract(contracts.abi, contractAddress);
       if (contract) {
         yield put({ type: 'getContractData' });
       }
@@ -111,13 +111,13 @@ export default {
     *getUpPoolAmount(_, { put }) {
       const res = yield contract.getUpAmount(gameId).call();
       if (res) {
-        yield put({ type: 'updateUpAmount', payload: tronWeb.fromSun(res) });
+        yield put({ type: 'updateUpAmount', payload: window.tronWeb.fromSun(res) });
       }
     },
     *getDownPoolAmount(_, { put }) {
       const res = yield contract.getDownAmount(gameId).call();
       if (res) {
-        yield put({ type: 'updateDownAmount', payload: tronWeb.fromSun(res) });
+        yield put({ type: 'updateDownAmount', payload: window.tronWeb.fromSun(res) });
       }
     },
     *getUpBettersCount(_, { put }) {
@@ -135,27 +135,27 @@ export default {
     *getBalance(_, { put }) {
       const res = yield contract.getBalance().call();
       if (res) {
-        yield put({ type: 'updateBalance', payload: { result: +tronWeb.fromSun(res.toNumber()) } });
+        yield put({ type: 'updateBalance', payload: +window.tronWeb.fromSun(res) });
       }
     },
     *getBetterPlay(_, { put }) {
-      const address = tronWeb.defaultAddress.base58;
+      const address = window.tronWeb.defaultAddress.base58;
       const res = yield contract.getBetterPlay(gameId, address).call();
       if (res) {
         yield put({ type: 'updateMyGame', payload: { type: res._result.toNumber() } });
       }
     },
     *getBetterInvested(_, { put }) {
-      const address = tronWeb.defaultAddress.base58;
+      const address = window.tronWeb.defaultAddress.base58;
       const res = yield contract.getBetterInvested(gameId, address).call();
       if (res) {
-        yield put({ type: 'updateMyGame', payload: { money: tronWeb.fromSun(res._result) } });
+        yield put({ type: 'updateMyGame', payload: { money: window.tronWeb.fromSun(res._result) } });
       }
     },
     *getResult(_, { put }) {
       const res = yield contract.getResult(gameId).call();
       if (res) {
-        yield put({ type: 'updateMyGame', payload: { result: +tronWeb.fromSun(res.toNumber()) } });
+        yield put({ type: 'updateMyGame', payload: { result: +window.tronWeb.fromSun(res.toNumber()) } });
       }
     },
     *betGame({ payload }, { call, put }) {
