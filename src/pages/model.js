@@ -85,7 +85,6 @@ export default {
           // 判断 tronWeb
           if (window.tronWeb && window.tronWeb.ready) {
             dispatch({ type: 'getContract' });
-            dispatch({ type: 'getAccountData' });
             clearInterval(timer);
           }
 
@@ -107,6 +106,7 @@ export default {
       yield put({ type: 'updateAccountData', payload: { address, balance }});
     },
     * getContractData(_, { put }) {
+      yield put({ type: 'getAccountData' });
       yield put({ type: 'updateLoading', payload: false });
       yield put({ type: 'getUpPoolAmount' });
       yield put({ type: 'getDownPoolAmount' });
