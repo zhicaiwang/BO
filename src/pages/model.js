@@ -151,6 +151,7 @@ export default {
     *getBalance(_, { put }) {
       const res = yield contract.getBalance().call();
       if (res) {
+        console.log('获取玩家的余额', res);
         yield put({ type: 'updateBalance', payload: +window.tronWeb.fromSun(res) });
       }
     },
