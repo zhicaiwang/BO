@@ -30,6 +30,7 @@ export default {
     downBettersCount: 0,
     result: 0,
     contract: null,
+    balance: 0,
 
     myGame: [],
     loading: true,
