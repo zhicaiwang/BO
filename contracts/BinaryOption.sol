@@ -305,11 +305,15 @@ contract BinaryOption {
      for(uint256 i = 0; i < SafeMath.add(_game.upBettersCount, _game.downBettersCount); i++) {
        Better memory better = _game.betters[i];
 
-       // Winner profit = (winner invest / all winners invested) * winners profit
-       if(better.bet == result && better.investedAmount > 0 && winnersProfit > 0){
-         uint256 _gain = SafeMath.div(SafeMath.mul(better.investedAmount, winnersProfit), winnersTotalInvested);
-         uint256 _balance = SafeMath.add(better.investedAmount, _gain);
-         gameBank[better.add] = SafeMath.add(gameBank[better.add], _balance);
+        // Winner profit = (winner invest / all winners invested) * winners profit
+       if(better.bet == result && better.investedAmount > 0){
+         if (winnersProfit > 0) {
+          uint256 _gain = SafeMath.div(SafeMath.mul(better.investedAmount, winnersProfit), winnersTotalInvested);
+          uint256 _balance = SafeMath.add(better.investedAmount, _gain);
+          gameBank[better.add] = SafeMath.add(gameBank[better.add], _balance);
+         } else { // if no profit, return back the money
+          gameBank[better.add] = SafeMath.add(gameBank[better.add], better.investedAmount);
+         }
        }
      }
 
