@@ -155,7 +155,7 @@ export default {
     *getResult(_, { put }) {
       const res = yield contract.getResult(gameId).call();
       if (res) {
-        yield put({ type: 'updateMyGame', payload: { result: +window.tronWeb.fromSun(res.toNumber()) } });
+        yield put({ type: 'updateMyGame', payload: { result: res._result.toNumber() } });
       }
     },
     *betGame({ payload }, { call, put }) {

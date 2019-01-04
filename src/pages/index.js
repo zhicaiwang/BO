@@ -65,12 +65,18 @@ const HomePage = ({
     {
       title: '竞猜结果',
       dataIndex: 'result',
-      render: (text) => (
+      render: (text, record) => (
         <div>
-          <span>{+text || '-'}</span>&nbsp;&nbsp;&nbsp;
+          <span>
+            {
+              +text === 0 ? '未出结果' :
+              +text === record.type ? '猜中' : '失败'
+            }
+          </span>
+          &nbsp;&nbsp;&nbsp;
           {
-            balance ? (
-              <Button type="primary" onClick={() => { dispatch({ type: 'home/playerWithdraw' })}}>提取</Button>
+            balance && +text === record.type ? (
+              <Button type="primary" onClick={() => { dispatch({ type: 'home/playerWithdraw' })}}>提取奖金</Button>
             ) : null
           }
         </div>
