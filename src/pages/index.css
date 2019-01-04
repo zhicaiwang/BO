@@ -1,3 +1,11 @@
+.bitcoinInfos {
+  padding: 10px;
+}
+
+.bitcoinInfos > p {
+  margin: 0;
+}
+
 .colorUp {
   color: green;
 }

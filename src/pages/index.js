@@ -49,10 +49,18 @@ const HomePage = ({
     {
       title: '竞猜涨跌',
       dataIndex: 'type',
+      render: (text) => (
+        <span>
+          {text === 1 ? '看涨' : '看跌'}
+        </span>
+      ),
     },
     {
       title: '竞猜金额',
       dataIndex: 'money',
+      render: (text) => (
+        <span>{text} TRX</span>
+      )
     },
     {
       title: '竞猜结果',
@@ -102,108 +110,111 @@ const HomePage = ({
   return (
     <div className="pageContent">
       <Spin tip="加载中" spinning={loading}>
-      <Card className={styles.card}>
-        <div className={styles.bet}>
-          <h2>
-            竞猜下注
-          </h2>
-          <Col
-            className={styles.titleCols}
-            xs={24}
-            sm={24}
-            md={8}
-            lg={6}
-            xl={6}
-            xxl={4}
-            style={{ float: 'right' }}
-          >
-            <div>
+        <Card className={styles.card}>
+          <div className={styles.bet}>
+            <h2>
+              竞猜下注
+            </h2>
+            <Col
+              className={styles.titleCols}
+              xs={24}
+              sm={24}
+              md={8}
+              lg={6}
+              xl={6}
+              xxl={4}
+              style={{ float: 'right' }}
+            >
+              <div className={styles.bitcoinInfos}>
                 <strong>今日BTC </strong>
-              <p className={styles.colorUp}>${CONFIG.today.bitcoin}</p>
-            </div>
-            <div>
+                <p className={styles.colorUp}>${CONFIG.today.bitcoin}</p>
+              </div>
+              <div className={styles.bitcoinInfos}>
                 <strong>昨日BTC</strong>
-              <p className={styles.colorUp}>${CONFIG.yesterday.bitcoin}</p>
-            </div>
-            <div>
+                <p className={styles.colorUp}>${CONFIG.yesterday.bitcoin}</p>
+              </div>
+              <div className={styles.bitcoinInfos}>
                 <strong>涨跌幅</strong>
                 <p className={today.bitcoin - yesterday.bitcoin > 0 ? styles.up : styles.down}>
                   { getBitcoinRate() }
                 </p>
-
-            </div>
-          </Col>
-          <Divider />
-          <Row>
-            <Col span={12}>
-              <Form
-                layout="inline"
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  validateFields((err, values) => {
-                    if (!err) {
-                      const { upBetAmount } = values;
-                      if (upBetAmount > 0) {
-                        dispatch({
-                          type: 'home/betGame',
-                          payload: {
-                            type: 1,
-                            amount: +upBetAmount * 1e6,
-                          }
-                        });
-                      } else {
-                        message.error('请输入看涨金额！');
-                      }
-                    }
-                  });
-                }}
-              >
-                <Form.Item label="下注数量">
-                  {
-                    getFieldDecorator('upBetAmount')(
-                      <Input type="number" />
-                    )
-                  }
-                </Form.Item>
-                <Form.Item>
-                  <Button
-                    style={{
-                      background: 'green',
-                      color: '#fff',
-                    }}
-                    htmlType="submit"
-                  >
-                    看涨
-                  </Button>
-                </Form.Item>
-              </Form>
+              </div>
             </Col>
-            <Col span={12}>
-              <Form
-                layout="inline"
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  validateFields((err, values) => {
-                    if (!err) {
-                      const { downBetAmount } = values;
-                      if (downBetAmount > 0) {
-                        dispatch({
-                          type: 'home/betGame',
-                          payload: {
-                            type: 2,
-                            amount: +downBetAmount * 1e6,
-                          }
-                        });
-                      } else {
-                        message.error('请输入看跌金额！');
+            <Divider />
+            <Row>
+              <Col span={12}>
+                <Form
+                  layout="inline"
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    validateFields((err, values) => {
+                      if (!err) {
+                        const { upBetAmount } = values;
+                        if (upBetAmount > 0) {
+                          dispatch({
+                            type: 'home/betGame',
+                            payload: {
+                              type: 1,
+                              amount: +upBetAmount * 1e6,
+                            }
+                          });
+                        } else {
+                          message.error('请输入看涨金额！');
+                        }
                       }
+                    });
+                  }}
+                >
+                  <Form.Item label="下注数量">
+                    {
+                      getFieldDecorator('upBetAmount', {
+                        initialValue: 100,
+                      })(
+                        <Input type="number" />
+                      )
                     }
-                  });
-                }}
-              >
-                <Form.Item label="下注数量">
-                  {
-                    getFieldDecorator('downBetAmount')(
+                  </Form.Item>
+                  <Form.Item>
+                    <Button
+                      style={{
+                        background: 'green',
+                        color: '#fff',
+                      }}
+                      htmlType="submit"
+                    >
+                      看涨
+                    </Button>
+                  </Form.Item>
+                </Form>
+              </Col>
+              <Col span={12}>
+                <Form
+                  layout="inline"
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    validateFields((err, values) => {
+                      if (!err) {
+                        const { downBetAmount } = values;
+                        if (downBetAmount > 0) {
+                          dispatch({
+                            type: 'home/betGame',
+                            payload: {
+                              type: 2,
+                              amount: +downBetAmount * 1e6,
+                            }
+                          });
+                        } else {
+                          message.error('请输入看跌金额！');
+                        }
+                      }
+                    });
+                  }}
+                >
+                  <Form.Item label="下注数量">
+                    {
+                      getFieldDecorator('downBetAmount',{
+                        initialValue: 100,
+                      })(
                       <Input type="number" />
                     )
                   }
