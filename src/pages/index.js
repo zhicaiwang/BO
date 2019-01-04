@@ -65,22 +65,27 @@ const HomePage = ({
     {
       title: '竞猜结果',
       dataIndex: 'result',
-      render: (text, record) => (
-        <div>
-          <span>
+      render: (text, record) => {
+        let result = ''
+        if (+text === 0) {
+          result = '尚未开奖';
+        } else {
+          result = +text === record.type ? '猜中' : '未猜中';
+        }
+        return (
+          <div>
+            <span>
+              {result}
+            </span>
+            &nbsp;&nbsp;&nbsp;
             {
-              +text === 0 ? '未出结果' :
-              +text === record.type ? '猜中' : '失败'
+              balance && +text === record.type ? (
+                <Button type="primary" onClick={() => { dispatch({ type: 'home/playerWithdraw' })}}>提取奖金</Button>
+              ) : null
             }
-          </span>
-          &nbsp;&nbsp;&nbsp;
-          {
-            balance && +text === record.type ? (
-              <Button type="primary" onClick={() => { dispatch({ type: 'home/playerWithdraw' })}}>提取奖金</Button>
-            ) : null
-          }
-        </div>
-      )
+          </div>
+        )
+      }
     }
   ];
 

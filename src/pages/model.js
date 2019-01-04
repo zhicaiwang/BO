@@ -33,6 +33,7 @@ export default {
 
     myGame: [],
     loading: true,
+    accountData: {},
   },
   subscriptions: {
     steup({ dispatch, history }) {
@@ -83,6 +84,7 @@ export default {
           // 判断 tronWeb
           if (window.tronWeb && window.tronWeb.ready) {
             dispatch({ type: 'getContract' });
+            dispatch({ type: 'getAccountData' });
             clearInterval(timer);
           }
 
@@ -96,6 +98,12 @@ export default {
       if (contract) {
         yield put({ type: 'getContractData' });
       }
+    },
+    *getAccountData(_, { put }) {
+      const address = tronWeb.defaultAddress.base58;
+      const res = yield tronWeb.trx.getBalance(address);
+      const balance = +tronWeb.fromSun(res);
+      yield put({ type: 'updateAccountData', payload: { address, balance }});
     },
     * getContractData(_, { put }) {
       yield put({ type: 'updateLoading', payload: false });
@@ -253,6 +261,12 @@ export default {
         ...state,
         balance: action.payload,
       };
+    },
+    updateAccountData(state, action) {
+      return {
+        ...state,
+        accountData: action.payload,
+      }
     }
   },
 };
