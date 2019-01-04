@@ -75,15 +75,7 @@ const HomePage = ({
         }
         return (
           <div>
-            <span>
-              {result}
-            </span>
-            &nbsp;&nbsp;&nbsp;
-            {
-              balance && +text === record.type ? (
-                <Button type="primary" onClick={() => { dispatch({ type: 'home/playerWithdraw' })}}>提取奖金</Button>
-              ) : null
-            }
+            {result}
           </div>
         )
       }
@@ -367,10 +359,30 @@ const HomePage = ({
 
         <Card className={styles.card}>
           <div className={styles.history}>
-            <h2>我的竞猜</h2>
+            <h2>
+              我的竞猜
+              {
+                balance ? (
+                  <div
+                    style={{ float: 'right' }}
+                  >
+                    <span style={{ fontSize: 16, color: 'red' }}>
+                      奖金：{balance}
+                    </span>
+                    &nbsp;&nbsp;&nbsp;
+                    <Button
+                      type="primary"
+                      onClick={() => { dispatch({ type: 'home/playerWithdraw' })}}
+                    >
+                      提取奖金
+                    </Button>
+                  </div>
+                ) : null
+              }
+            </h2>
             <Divider />
             <Table
-              rowKey="date"
+              rowKey={(record, index) => (`${record.gameId}-${index}`)}
               columns={columns}
               locale={{
                 emptyText: '暂无数据'
