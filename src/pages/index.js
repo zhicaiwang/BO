@@ -119,7 +119,7 @@ const HomePage = ({
             <h2 className={styles.betTitle}>
               竞猜下注
               <span>
-                今日 12:00 BTC 价格 vs. 明日 12:00 BTC 价格
+                今日12:00 vs. 明日12:00 BTC价格
               </span>
             </h2>
             <Col
@@ -248,7 +248,7 @@ const HomePage = ({
             <h2>
               今日竞猜情况
               <span>
-                竞猜开放时间：每日的12:00 - 24:00
+                开放时间：每日12:00-24:00
               </span>
             </h2>
             <Divider />
