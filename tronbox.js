@@ -2,9 +2,9 @@ module.exports = {
   networks: {
     development: {
 // For trontools/quickstart docker image
-      from: 'TD8qupQLwQi8MrP1WW2XWi2UC57XuzscLJ',
+      from: 'TDpcvYkR3M39RYrVDfgjqNwV9uzoY1Arnm',
       //privateKey: 'da146374a75310b9666e834ee4ad0866d6f4035967bfc76217c5a495fff9f0d0',
-      privateKey: '99b303603ebbd6090620d6cfec0a1871e30310b6464b6763c1590fe9b909feae',
+      privateKey: 'fddc45febfda30bb4ce48d93ac0518e664516168e918ed2caab6ba3d615a9842',
       consume_user_resource_percent: 50,
       fee_limit: 1000000000,
 
@@ -15,9 +15,9 @@ module.exports = {
       fullNode: "http://127.0.0.1:8090",
       solidityNode: "http://127.0.0.1:8091",
       eventServer: "http://127.0.0.1:8092",
-      // fullNode: "https://api.trongrid.io",
-      // solidityNode: "https://api.trongrid.io",
-      // eventServer: "https://api.trongrid.io",
+       //fullNode: "https://api.trongrid.io",
+       //solidityNode: "https://api.trongrid.io",
+       //eventServer: "https://api.trongrid.io",
 
       network_id: "*"
     },

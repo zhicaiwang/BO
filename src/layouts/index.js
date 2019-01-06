@@ -25,11 +25,11 @@ const BasicLayout = ({
         {
           accountData.address ? (
             <div style={{ float: 'right', paddingTop: 6, }}>
-              <p style={{ lineHeight: '24px', color: '#fff', margin: 0, minWidth: 360, textAlign: 'left', }}>
-                <span>钱包地址：</span>{accountData.address}
+              <p style={{ lineHeight: '24px', color: '#fff', margin: 0, minWidth: 40, textAlign: 'left', }}>
+                <span></span>{accountData.address.substring(0,8)+"..."}
               </p>
-              <p style={{ lineHeight: '24px', color: '#fff', margin: 0, minWidth: 360, textAlign: 'left', }}>
-                <span>账户余额：</span>{accountData.balance}
+              <p style={{ lineHeight: '24px', color: '#fff', margin: 0, minWidth: 40, textAlign: 'left', }}>
+                <span></span>{accountData.balance+" TRX"}
               </p>
             </div>
           ) : null
