@@ -2,9 +2,9 @@ module.exports = {
   networks: {
     development: {
 // For trontools/quickstart docker image
-      from: 'TDpcvYkR3M39RYrVDfgjqNwV9uzoY1Arnm',
+      from: 'XXX',
       //privateKey: 'da146374a75310b9666e834ee4ad0866d6f4035967bfc76217c5a495fff9f0d0',
-      privateKey: 'fddc45febfda30bb4ce48d93ac0518e664516168e918ed2caab6ba3d615a9842',
+      privateKey: 'XXX',
       consume_user_resource_percent: 50,
       fee_limit: 1000000000,
 
@@ -49,9 +49,9 @@ module.exports = {
     },
     shasta: {
       //privateKey: process.env.PK,
-      from: 'TETsrEFMWFSPpY4Ey5EpT4V84k34CxFpFE',
+      from: 'XXX',
       //privateKey: 'da146374a75310b9666e834ee4ad0866d6f4035967bfc76217c5a495fff9f0d0',
-      privateKey: '37d459332e86c6e63224ec0099ff5c1466c0d1e6fd0aa011165977fd56cf7e3b',
+      privateKey: 'XXX',
       consume_user_resource_percent: 100,
       fee_limit: 1000000000,
 

@@ -1,8 +1,8 @@
 export default {
   "today": {
-    "bitcoin": 3823.95,
+    "bitcoin": 3581.88,
   },
   "yesterday": {
-    "bitcoin": 3795.60,
+    "bitcoin": 3593.94,
   }
 }

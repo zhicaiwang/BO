@@ -13,7 +13,7 @@ import {
 } from 'antd';
 import styles from './index.css';
 import CONFIG from '../../public/config.js';
-import { getHistoryGameId } from '../utils';
+import { getHistoryGameId, getStartTime, getEndTime, getCurrentTimeInUTC8, getGameId } from '../utils';
 
 const HomePage = ({
   home,
@@ -157,16 +157,26 @@ const HomePage = ({
                     validateFields((err, values) => {
                       if (!err) {
                         const { upBetAmount } = values;
-                        if (upBetAmount > 0) {
-                          dispatch({
-                            type: 'home/betGame',
-                            payload: {
-                              type: 1,
-                              amount: +upBetAmount * 1e6,
-                            }
-                          });
+                        console.log('GameID ' + getGameId());
+                        console.log('LocalTime ' + new Date());
+                        console.log('UTC 8 ' + getCurrentTimeInUTC8());
+                        console.log('StartTime ' + new Date(getStartTime()).toString());
+                        console.log('EndTime ' + new Date(getEndTime()).toString());
+
+                        if (upBetAmount >= 100 ) {
+                          if (getCurrentTimeInUTC8() >= getStartTime() && getCurrentTimeInUTC8() <= getEndTime()) {
+                            dispatch({
+                              type: 'home/betGame',
+                              payload: {
+                                type: 1,
+                                amount: +upBetAmount * 1e6,
+                              }
+                            });
+                          } else {
+                            message.error('开放时间：每日12:00-24:00 GMT+0800 China Standard Time');
+                          }
                         } else {
-                          message.error('请输入看涨金额！');
+                          message.error('最小下注金额为100TRX！');
                         }
                       }
                     });
@@ -202,16 +212,27 @@ const HomePage = ({
                     validateFields((err, values) => {
                       if (!err) {
                         const { downBetAmount } = values;
-                        if (downBetAmount > 0) {
-                          dispatch({
-                            type: 'home/betGame',
-                            payload: {
-                              type: 2,
-                              amount: +downBetAmount * 1e6,
-                            }
-                          });
+
+                        console.log('GameID ' + getGameId());
+                        console.log('LocalTime ' + new Date());
+                        console.log('UTC 8 ' + getCurrentTimeInUTC8());
+                        console.log('StartTime ' + new Date(getStartTime()).toString());
+                        console.log('EndTime ' + new Date(getEndTime()).toString());
+                        
+                        if (downBetAmount >= 100) {
+                          if (getCurrentTimeInUTC8() >= getStartTime() && getCurrentTimeInUTC8() <= getEndTime()) {
+                            dispatch({
+                              type: 'home/betGame',
+                              payload: {
+                                type: 2,
+                                amount: +downBetAmount * 1e6,
+                              }
+                            });
+                          } else {
+                            message.error('开放时间：每日12:00-24:00 GMT+0800 China Standard Time');
+                          }
                         } else {
-                          message.error('请输入看跌金额！');
+                          message.error('最小下注金额为100TRX！');
                         }
                       }
                     });
