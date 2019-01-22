@@ -430,7 +430,7 @@ const HomePage = ({
                 如何计算：每局以每天中午 12 点 BTC 价格对比第二天中午 12 点 BTC 价格计算涨／跌 (所有时间以GMT+0800 China Standard Time为基准)。
               </li>
               <li>
-                数据来源：BTC 价格来源于 CoinDesk BPI。（<a href="https://www.coindesk.com/price/bitcoin" target="_blank">https://www.coindesk.com/price/bitcoin</a>）
+                数据来源：BTC 价格来源于 CoinDesk API。（<a href="https://www.coindesk.com/api" target="_blank">https://www.coindesk.com/api</a>）
               </li>
               <li>
                 竞猜开放时间：用户可在每天中午 12 点至晚上 24 点进行投注，竞猜当天中午 12 点至第二天中午 12 点的 BTC 价格涨跌。
@@ -450,7 +450,8 @@ const HomePage = ({
           If you reside in a location where lottery, gambling, or betting over the internet is illegal, please do not click on anything related to these activities on this site.  You must be 21 years of age to click on any gambling related items even if it is legal to do so in your location.  Recognising that the laws and regulations involving online gaming are different everywhere, players are advised to check with the laws that exist within their own jurisdiction or region to ascertain the legality of the activities which are covered.
 
 The games provided by BINARYTRON are based on blockchain, fair, and transparency.  When you start playing these games, please take not that online gambling and lottery is an entertainment vehicle and that it carries with it a certain degree of financial risk.  Players should be aware of these risks and govern themselves accordingly.
-            COPYRIGHT ©2018 BINARYTRON.COM ALL RIGHT RESERVED. <a href="mailto:nongfustarbucks@gmail.com">Contact Us</a>
+
+            <li>COPYRIGHT ©2018 BINARYTRON.COM ALL RIGHT RESERVED. </li><a href="mailto:nongfustarbucks@gmail.com">Contact Us</a>
           </Row>
         </Card>
 
