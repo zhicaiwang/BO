@@ -35,12 +35,12 @@ const HomePage = ({
     loading,
     myGame,
     balance,
-  } = home;
 
-  const {
-    today,
-    yesterday,
-  } = CONFIG;
+    price: {
+      today,
+      yesterday,
+    },
+  } = home;
 
   const columns = [
     {
@@ -134,11 +134,11 @@ const HomePage = ({
             >
               <div className={styles.bitcoinInfos}>
                 <strong>今日 BTC </strong>
-                <p className={styles.colorUp}>${CONFIG.today.bitcoin}</p>
+                <p className={styles.colorUp}>${today.bitcoin}</p>
               </div>
               <div className={styles.bitcoinInfos}>
                 <strong>昨日 BTC</strong>
-                <p className={styles.colorUp}>${CONFIG.yesterday.bitcoin}</p>
+                <p className={styles.colorUp}>${yesterday.bitcoin}</p>
               </div>
               <div className={styles.bitcoinInfos}>
                 <strong>涨跌幅</strong>
@@ -213,12 +213,12 @@ const HomePage = ({
                       if (!err) {
                         const { downBetAmount } = values;
 
-                        console.log('GameID ' + getGameId());
-                        console.log('LocalTime ' + new Date());
-                        console.log('UTC 8 ' + getCurrentTimeInUTC8());
-                        console.log('StartTime ' + new Date(getStartTime()).toString());
-                        console.log('EndTime ' + new Date(getEndTime()).toString());
-                        
+                        // console.log('GameID ' + getGameId());
+                        // console.log('LocalTime ' + new Date());
+                        // console.log('UTC 8 ' + getCurrentTimeInUTC8());
+                        // console.log('StartTime ' + new Date(getStartTime()).toString());
+                        // console.log('EndTime ' + new Date(getEndTime()).toString());
+
                         if (downBetAmount >= 100) {
                           if (getCurrentTimeInUTC8() >= getStartTime() && getCurrentTimeInUTC8() <= getEndTime()) {
                             dispatch({
@@ -450,7 +450,7 @@ const HomePage = ({
           If you reside in a location where lottery, gambling, or betting over the internet is illegal, please do not click on anything related to these activities on this site.  You must be 21 years of age to click on any gambling related items even if it is legal to do so in your location.  Recognising that the laws and regulations involving online gaming are different everywhere, players are advised to check with the laws that exist within their own jurisdiction or region to ascertain the legality of the activities which are covered.
 
 The games provided by BINARYTRON are based on blockchain, fair, and transparency.  When you start playing these games, please take not that online gambling and lottery is an entertainment vehicle and that it carries with it a certain degree of financial risk.  Players should be aware of these risks and govern themselves accordingly.
-            COPYRIGHT ©2018 BINARYTRON.COM ALL RIGHT RESERVED.
+            COPYRIGHT ©2018 BINARYTRON.COM ALL RIGHT RESERVED. <a href="mailto:nongfustarbucks@gmail.com">Contact Us</a>
           </Row>
         </Card>
 

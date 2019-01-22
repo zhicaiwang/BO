@@ -36,6 +36,15 @@ export default {
     myGame: getHistoryGameId().map((item) => ({ gameId: item })),
     loading: true,
     accountData: {},
+
+    price: {
+      today: {
+        bitcoin: 0,
+      },
+      yesterday: {
+        bitcoin: 0,
+      }
+    },
   },
   subscriptions: {
     steup({ dispatch, history }) {
@@ -93,6 +102,7 @@ export default {
               dispatch({ type: 'getResult', payload: item });
             });
             clearInterval(timer);
+            dispatch({ type: 'getPrice' });
           }
 
         }, 100);
@@ -100,6 +110,10 @@ export default {
     },
   },
   effects: {
+    *getPrice(_, { call, put }) {
+      const res = yield call(getBitcoinAmount);
+      yield put({ type: 'updatePrice', payload: res });
+    },
     *getContract(_, { call, put }) {
       contract = yield window.tronWeb.contract(contracts.abi, contractAddress);
       if (contract) {
@@ -280,6 +294,12 @@ export default {
         ...state,
         accountData: action.payload,
       }
+    },
+    updatePrice(state, action) {
+      return {
+        ...state,
+        price: action.payload,
+      };
     }
   },
 };

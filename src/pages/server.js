@@ -1,8 +1,5 @@
-import TronWeb from 'tronweb';
-import { getGameId } from '../utils';
-import axios from 'axios';
+import { get } from '../utils/fetch';
 
-import contracts from '../../build/contracts/BinaryOption.json';
-
-let contract = null;
-const gameId = getGameId();
+export async function getBitcoinAmount() {
+  return get('/price.json');
+}
